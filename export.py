@@ -8,7 +8,7 @@ from docx import Document
 from sample import BiologicalSample
 
 
-def export_to_excel (samples, filename='samples.xlsx'):
+def export_to_excel(samples, filename='samples.xlsx'):
     """
     Экспорт списка образцов в файл Excel.
     Создание списка объектов BiologicalSample.
@@ -17,13 +17,13 @@ def export_to_excel (samples, filename='samples.xlsx'):
     wb = Workbook()
     ws = wb.active
     ws.title = 'Биологические образцы'
-    
+
     headers = ['ID','Название','Тип','Дата сбора','Место','Примечания']
     ws.append(headers)
-    
+
     for cell in ws[1]:
         cell.font = Font(bold=True)
-    
+
     for sample in samples:
         row = [
             sample.id,
@@ -34,7 +34,7 @@ def export_to_excel (samples, filename='samples.xlsx'):
             sample.notes
         ]
         ws.append(row)
-        
+
     for col in ws.columns:
         max_length = 0
         column = col[0].column_letter
@@ -50,7 +50,8 @@ def export_to_excel (samples, filename='samples.xlsx'):
     wb.save(filename)
 
 
-def export_to_word(samples:List[BiologicalSample],filename:str="samples.docx"):
+def export_to_word(samples:List[BiologicalSample],
+                   filename: str = "samples.docx"):
     """
     Экспорт списка образцов в файл Docx.
     Создаёт документ с карточками образцов, где для каждого образца указаны:
@@ -67,16 +68,17 @@ def export_to_word(samples:List[BiologicalSample],filename:str="samples.docx"):
         doc.add_paragraph(f'Тип: {sample.type}')
         doc.add_paragraph(f'Дата отбора: {sample.collection_date}')
         doc.add_paragraph(f'Место: {sample.location}')
-        
+
         if sample.notes:
             doc.add_paragraph(f'Примечание: {sample.notes}')
-            
+
         doc.add_paragraph('-' * 40)
-    
+
     doc.save(filename)
 
 
-def export_to_csv(samples:List[BiologicalSample],filename:str='samples.csv'):
+def export_to_csv(samples:List[BiologicalSample],
+                  filename: str = 'samples.csv'):
     with open(filename,'w',newline='',encoding='utf-8') as file:
         writer = csv.writer(file)
         # Запишите заголовки и данные
@@ -90,5 +92,5 @@ def export_to_csv(samples:List[BiologicalSample],filename:str='samples.csv'):
                 sample.notes
             ]
         writer.append()
-    
+
     writer.save()
