@@ -10,7 +10,7 @@ class BiologicalSample:
         location: Место сбора.
         notes: Дополнительные заметки.
         """
-        self.sample_id = sample_id
+        self.id = sample_id
         self.name = name
         self.type = sample_type
         self.collection_date = collection_date
