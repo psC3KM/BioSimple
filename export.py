@@ -3,7 +3,6 @@ import json
 from typing import List
 from openpyxl import Workbook
 from openpyxl.styles import Font
-from openpyxl.utils import get_column_letter
 from docx import Document
 from sample import BiologicalSample
 
@@ -18,22 +17,21 @@ def export_to_excel(samples, filename='samples.xlsx'):
     ws = wb.active
     ws.title = 'Биологические образцы'
 
-    headers = ['ID','Название','Тип','Дата сбора','Место','Примечания']
+    headers = ['ID', 'Название', 'Тип', 'Дата сбора', 'Место', 'Примечания']
     ws.append(headers)
 
     for cell in ws[1]:
         cell.font = Font(bold=True)
 
     for sample in samples:
-        row = [
+        ws.append([
             sample.id,
             sample.name,
             sample.type,
             sample.collection_date,
             sample.location,
             sample.notes
-        ]
-        ws.append(row)
+        ])
 
     for col in ws.columns:
         max_length = 0
@@ -42,7 +40,20 @@ def export_to_excel(samples, filename='samples.xlsx'):
             try:
                 if len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
-            except:
+            except Exception:
+                pass
+        ws.column_dimensions[column].width = max_length + 2
+
+    wb.save(filename)
+
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column_letter
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except Exception:
                 pass
         adjusted_width = (max_length + 2)
         ws.column_dimensions[column].width = adjusted_width
@@ -50,7 +61,7 @@ def export_to_excel(samples, filename='samples.xlsx'):
     wb.save(filename)
 
 
-def export_to_word(samples:List[BiologicalSample],
+def export_to_word(samples: List[BiologicalSample],
                    filename: str = "samples.docx"):
     """
     Экспорт списка образцов в файл Docx.
@@ -77,20 +88,33 @@ def export_to_word(samples:List[BiologicalSample],
     doc.save(filename)
 
 
-def export_to_csv(samples:List[BiologicalSample],
+def export_to_csv(samples: List[BiologicalSample],
                   filename: str = 'samples.csv'):
-    with open(filename,'w',newline='',encoding='utf-8') as file:
+    """
+    Экспорт списка образцов в CSV-файл.
+    """
+    with open(filename, 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        # Запишите заголовки и данные
-        for writer in writers:
-            row = [
+        writer.writerow(['ID', 'Название', 'Тип', 'Дата сбора',
+                         'Место', 'Примечания'])
+        for sample in samples:
+            writer.writerow([
                 sample.id,
                 sample.name,
                 sample.type,
                 sample.collection_date,
                 sample.location,
                 sample.notes
-            ]
-        writer.append()
+            ])
 
-    writer.save()
+
+def export_to_json(samples: List[BiologicalSample],
+                   filename: str = 'samples.json'):
+    """
+    Экспорт список образцов в JSON-файл.
+    """
+    data = []
+    for sample in samples:
+        data.append(sample.__dict__)
+    with open(filename, 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
