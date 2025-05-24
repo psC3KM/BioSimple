@@ -76,45 +76,20 @@ def add_sample_menu(manager):
 
 def search_sample_menu(manager):
     """
-    Меню поиска биологических образцов, по заданным параметрам.
-
-    Args:
-        manager (SampleManager): Объект для работы с коллекцией образцов.
-
-    Позволяет искать:
-    - Уникальному ID
-    - Названию
-    - Типу образца
-    - Дате сбора (в формате ДД.ММ.ГГГГ)
-    - Месту отбора
-    - Опциональные примечание
-
-    Выводит количество найденных образцов и их список.
+    Меню поиска образца по ID
     """
-    print('\nПоиск образцов')
-    print('Введите параметр для поиска: ')
+    print('\nПоиск образца по ID')
+    try:
+        sample_id = int(input('Введите ID образца: '))
+        sample = manager.search_sample(sample_id)
 
-    filters = {}
-    if sample_id := input('ID: '):
-        try:
-            filters['id'] = int(sample_id)
-        except ValueError:
-            print('Ошибка ID должен быть числом')
-    if name := input('Название: '):
-        filters['name'] = name
-    if sample_type := input('Тип: '):
-        filters['type'] = sample_type
-    if date := input('Дата отбора: '):
-        filters['collection_date'] = date
-    if location := input('Место отбора: '):
-        filters['location'] = location
-    if notes := input('Примечание: '):
-        filters['notes'] = notes
-
-    results = manager.search_sample(**filters)
-    print(f'Найден {len(results)} образцов:')
-    for sample in results:
-        print(sample)
+        if sample:
+            print('\nНайден образец:')
+            print(sample)
+        else:
+            print(f'\nОбразец с ID {sample_id} не найден')
+    except ValueError:
+        print('Ошибка: ID должен быть числом')
 
 
 def export_menu(manager):

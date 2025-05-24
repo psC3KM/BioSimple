@@ -24,22 +24,12 @@ class SampleManager:
             return True
         return False
 
-    def search_sample(self, **filters):
+    def search_sample(self, sample_id):
         """
-        Поиск образцов по критериям
-        filters: Поля и их значения для фильтрации.
-        return: Список подходящих образцов.
+        Поиск образца по ID.
+        Возвращает образец если найден, иначе None.
         """
-        result = []
-        for sample in self.samples.values():
-            match = True
-            for field, value in filters.items():
-                if getattr(sample, field) != value:
-                    match = False
-                    break
-            if match:
-                result.append(sample)
-        return result
+        return self.samples.get(sample_id)
 
     def edit_sample(self, sample_id, **changes):
         """
